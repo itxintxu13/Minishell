@@ -55,4 +55,12 @@ re: fclean all
 fsa: CFLAGS += -fsanitize=address
 fsa: re
 
-.PHONY: all clean fclean re fsa
+test: $(NAME)
+	@echo "$(BLUE)Running tests...$(RESET)"
+	@bash tests/run_tests.sh
+
+leak_test: $(NAME)
+	@echo "$(BLUE)Running leak tests...$(RESET)"
+	@bash tests/leak_test.sh
+
+.PHONY: all clean fclean re fsa test leak_test

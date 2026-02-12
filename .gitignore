@@ -1,0 +1,31 @@
+# Ejecutables
+minishell
+
+# Archivos objeto
+*.o
+*.a
+
+# Directorios de compilación
+build/
+obj/
+
+# Archivos de depuración
+*.dSYM/
+vgcore.*
+*.log
+
+# Archivos temporales del sistema
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Readline history
+.readline_history
+
+# Archivos de test
+test_output/
+*.test
+
+# Sanitizer outputs
+*.out
