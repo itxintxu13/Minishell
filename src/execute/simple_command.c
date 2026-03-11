@@ -85,7 +85,7 @@ void	execute_simple_command(char **tokens, int has_pipe)
 		free(*tokens);
 		*tokens = ft_strdup(dir);
 	}
-	execute_binary(tokens);
 	compute_fds(fds, CLOSE);
+	execute_binary(tokens);
 	free_all(tokens);
 }

@@ -87,6 +87,8 @@ int	ft_cd(char *path)
 	if (!dir)
 		error_handle_f(1, "cd: No such file or directory\n");
 	closedir(dir);
+	if (chdir(pwd) == -1)
+		error_handle_f(1, "cd: chdir failed\n");
 	ft_export("PWD", pwd);
 	free(pwd);
 	return (0);

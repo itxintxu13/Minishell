@@ -37,6 +37,8 @@ char	*z_maloc(int size)
 	char	*vec;
 
 	vec = malloc(sizeof(char) * (size + 1));
+	if (!vec)
+		return (NULL);
 	while (size)
 	{
 		vec[size] = '\0';
