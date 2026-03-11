@@ -13,6 +13,28 @@
 #include "../../include/utils.h"
 #include "../../include/commands.h"
 
+void	ft_process_export(char **tokens, int aux, int has_pipe)
+{
+	char	**str;
+
+	str = ft_split_custom(tokens[aux], '=');
+	if (include(str[0], "?") || !valid_name_export(str[0]))
+	{
+		free_all(str);
+		error_handle_f(1, " not a valid identifier\n");
+	}
+	if (has_pipe || !include(tokens[aux], "="))
+	{
+		free_all(str);
+		return ;
+	}
+	if (len_all(str) == 2)
+		ft_export(str[0], str[1]);
+	else
+		ft_export(str[0], "");
+	free_all(str);
+}
+
 void	ft_env_tokens(void)
 {
 	ft_env();
