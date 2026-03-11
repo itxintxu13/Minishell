@@ -79,6 +79,7 @@ void	save_buffer(char *buff, int	*j)
 	{
 		free(buff);
 		error_handle_f(1, "Failed to open temporary file\n");
+		return ;
 	}
 	write_buffer_to_fd(fd, buff);
 }
