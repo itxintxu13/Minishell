@@ -43,6 +43,8 @@ static char	check_duplicate(char *name)
 	struct dirent	*ent;
 
 	path = opendir("/tmp");
+	if (!path)
+		return (0);
 	ent = readdir(path);
 	while (ent)
 	{

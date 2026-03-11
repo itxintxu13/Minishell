@@ -33,7 +33,10 @@ char	*read_input(char *delimiter)
 	{
 		str = readline(">");
 		if (!str || equal(str, delimiter))
+		{
+			free(str);
 			break ;
+		}
 		tmp = ft_strjoin(str, "\n");
 		free(str);
 		str = ft_strjoin(buff, tmp);

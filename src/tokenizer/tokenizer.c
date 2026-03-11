@@ -49,7 +49,10 @@ char	**compute_saves(char **tokens, char flg, char **bgn, char *end)
 			{
 				tmp = ft_strdup(oprt);
 				if (!tmp)
+				{
 					free_all(tokens);
+					return (NULL);
+				}
 				tokens = resize_tokens(tokens, tmp);
 			}
 		}

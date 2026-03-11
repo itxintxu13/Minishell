@@ -31,8 +31,6 @@ void	execute_console(char *str, char **env_save)
 		free_all(tokens);
 		return ;
 	}
-	if (parent_try_builtin(tokens, has_pipe, env_save))
-		return ;
 	pid = fork();
 	if (pid == 0)
 	{
@@ -76,12 +74,17 @@ int	main(int argc, char **argv, char **env)
 		ft_prompt();
 		str = readline(" ");
 		if (!str)
+		{
+			free_all(env_save);
 			break ;
+		}
 		if (ft_strlen(str))
 			add_history(str);
 		execute_console(str, env_save);
+		free(str);
 		free_all(env_save);
 	}
 	rl_clear_history();
 	last_exit();
+	return (0);
 }

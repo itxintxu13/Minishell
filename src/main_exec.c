@@ -46,18 +46,6 @@ void	parent_finalize(char **tokens,
 	ft_export_num("?", WEXITSTATUS(status));
 }
 
-int	parent_try_builtin(char **tokens, int has_pipe, char **env_save)
-{
-	if (!has_pipe && is_builtin(tokens))
-	{
-		execute_builtin(tokens, NOT_PIPE);
-		free_all(tokens);
-		return (1);
-	}
-	(void)env_save;
-	return (0);
-}
-
 int	prepare_and_get_tokens(char *str, char ***out_tokens, char **env_save)
 {
 	int	has_pipe;
