@@ -66,12 +66,15 @@ char	*expand_heredoc(char *delimiter, int *j)
 	char	*tmp;
 	char	name[15];
 	char	*file_no;
+	int		expand;
 
+	expand = (delimiter[0] != '\'' && delimiter[0] != '"');
 	tmp = ft_strtrim(delimiter, "\"'");
 	free(delimiter);
 	buff = read_input(tmp);
 	free(tmp);
-	buff = compute_dolars(buff);
+	if (expand)
+		buff = compute_dolars(buff);
 	save_buffer(buff, j);
 	ft_memmove(name, "tmp", 4);
 	file_no = ft_itoa((*j)++);
