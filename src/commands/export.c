@@ -75,6 +75,8 @@ void	ft_export_void(void)
 	int		aux;
 
 	env = ft_getallenv();
+	if (!env)
+		return ;
 	aux = 0;
 	while (env[aux])
 	{

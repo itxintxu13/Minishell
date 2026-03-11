@@ -56,15 +56,23 @@ void	await(int pid[PIPE_MAX], int cant_pipe, char **tokens)
 {
 	int	aux;
 	int	status;
+	int	exit_code;
 
 	aux = -1;
+	exit_code = 0;
 	while (++aux <= cant_pipe)
 	{
 		waitpid(pid[aux], &status, 0);
-		ft_export_num("?", WEXITSTATUS(status));
+		if (WIFEXITED(status))
+			exit_code = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			exit_code = 128 + WTERMSIG(status);
+		else
+			exit_code = 1;
 	}
+	ft_export_num("?", exit_code);
 	free_all(tokens);
-	error_handle_f(WEXITSTATUS(status), "");
+	error_handle_f(exit_code, "");
 }
 
 void	redirect_out(int p_fd[PIPE_MAX][2], int aux, int cant_pipe)
