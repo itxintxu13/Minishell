@@ -85,7 +85,7 @@ char	**read_file(int fd, char c)
 	buf = z_maloc(SIZE_BUF);
 	text = append(NULL, 1, buf);
 	bt_read = read(fd, buf, SIZE_BUF);
-	while (bt_read)
+	while (bt_read > 0)
 	{
 		text = append(text, bt_read, buf);
 		bt_read = read(fd, buf, SIZE_BUF);

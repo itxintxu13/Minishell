@@ -55,18 +55,24 @@ void	save_buffer(char *buff, int	*j)
 	int		fd;
 
 	if (*j > HDOC_MAX)
-		error_handle(0, "Exceeded maximum Here-Document number\n");
+		error_handle_f(1, "Exceeded maximum Here-Document number\n");
 	ft_memmove(name, TMP_FILE, ft_strlen(TMP_FILE) + 1);
 	file_no = ft_itoa(*j);
 	ft_strlcat(name, file_no, 66);
 	free(file_no);
 	permitions = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
 	fd = open(name, O_WRONLY | O_CREAT, permitions);
-	if (write(fd, buff, ft_strlen(buff)) == -1)
+	if (fd == -1)
 	{
 		free(buff);
+		error_handle_f(1, "Failed to open temporary file\n");
+	}
+	if (buff && write(fd, buff, ft_strlen(buff)) == -1)
+	{
 		close(fd);
-		error_handle(0, "Failed to write to temporary file\n");
+		free(buff);
+		buff = NULL;
+		error_handle_f(1, "Failed to write to temporary file\n");
 	}
 	free(buff);
 	close(fd);

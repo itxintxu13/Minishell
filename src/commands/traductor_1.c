@@ -38,17 +38,23 @@ void	ft_exit_tokens(char **tokens, int has_pipe)
 
 	len = len_all(tokens);
 	if (len == 1)
+	{
+		if (has_pipe)
+			exit(0);
 		ft_exit(0);
+	}
 	if (verify(tokens[1]) != 0)
 	{
 		if (write(2, "exit: numeric argument required\n", 33) == -1)
 			return ;
-		if (!has_pipe)
-			ft_exit(2);
+		if (has_pipe)
+			exit(2);
+		ft_exit(2);
 		return ;
 	}
 	if (len > 2)
 		error_handle_f(1, "exit: too many arguments\n");
-	if (!has_pipe)
-		ft_exit(ft_atoi(tokens[1]));
+	if (has_pipe)
+		exit(ft_atoi(tokens[1]) % 256);
+	ft_exit(ft_atoi(tokens[1]));
 }
