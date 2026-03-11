@@ -1,6 +1,134 @@
-# Minishell - Guía de Estudio para la Evaluación
+# Minishell
 
-Este proyecto es una implementación de una shell básica (similar a Bash). A continuación se detallan todas las funciones organizadas por módulos para facilitar el repaso y estudio.
+Implementación de una shell interactiva en C, similar a Bash, desarrollada como proyecto del cursus de 42. Interpreta y ejecuta comandos de forma interactiva con soporte para tuberías, redirecciones, variables de entorno y comandos internos.
+
+---
+
+## Análisis del Proyecto
+
+### Descripción General
+
+Minishell replica el comportamiento esencial de una shell POSIX:
+- Bucle interactivo con historial (GNU readline)
+- Tokenización léxica y validación sintáctica
+- Expansión de variables de entorno (`$VAR`, `$?`)
+- Manejo de comillas simples y dobles
+- Pipelines (`|`) con múltiples comandos
+- Redirecciones (`<`, `>`, `>>`, `<<`)
+- Siete comandos internos
+- Manejo de señales (`Ctrl+C`, `Ctrl+\`)
+
+### Requisitos y Compilación
+
+**Dependencias:**
+- Compilador C (`cc`)
+- Librería GNU readline (`libreadline-dev` en Debian/Ubuntu)
+
+**Instrucciones de compilación:**
+```bash
+# Compilación estándar
+make
+
+# Compilación con AddressSanitizer (detección de fugas de memoria)
+make fsa
+
+# Limpiar objetos
+make clean
+
+# Limpiar todo (objetos + ejecutable)
+make fclean
+
+# Recompilar desde cero
+make re
+```
+
+**Uso:**
+```bash
+./minishell
+```
+
+### Arquitectura del Proyecto
+
+```
+src/
+├── main.c                  # Punto de entrada y bucle principal
+├── main_exec.c             # Orquestación de ejecución
+├── prompt/prompt.c         # Visualización del prompt
+├── signal/signal.c         # Manejadores de señales
+├── tokenizer/              # Lexer: string → tokens
+├── parse/parse.c           # Validación sintáctica
+├── expansions/             # Expansión de variables y comillas
+├── execute/                # Ejecución de comandos simples
+├── pipe/                   # Gestión de pipelines
+├── redirections/           # Redirecciones de E/S
+├── commands/               # Comandos internos (builtins)
+└── utils/                  # Funciones de utilidad (strings, env, etc.)
+include/                    # Cabeceras del proyecto
+```
+
+**Flujo de ejecución:**
+```
+Entrada → Tokenizar → Parsear → Expandir → Fork → Ejecutar
+                                                      ↓
+                                              ¿Tiene pipes?
+                                              Sí → compute_pipeline()
+                                              No → execute_simple_command()
+                                                      ↓
+                                              ¿Es builtin?
+                                              Sí → execute_builtin()
+                                              No → execve() (binario externo)
+```
+
+### Comandos Internos (Builtins)
+
+| Comando | Descripción |
+|---------|-------------|
+| `echo [-n]` | Imprime texto; `-n` suprime el salto de línea |
+| `cd [path]` | Cambia de directorio; actualiza `PWD` y `OLDPWD` |
+| `pwd` | Muestra el directorio actual |
+| `export [VAR=val]` | Añade o actualiza variables de entorno |
+| `unset VAR` | Elimina variables de entorno |
+| `env` | Lista todas las variables de entorno |
+| `exit [n]` | Sale de la shell con código de salida `n % 256` |
+
+### Funcionalidades Implementadas
+
+- ✅ Prompt interactivo con historial (readline)
+- ✅ Comillas simples (sin expansión) y dobles (con expansión de `$VAR`)
+- ✅ Expansión de variables de entorno (`$VAR`, `$?`)
+- ✅ Pipelines múltiples (`cmd1 | cmd2 | cmd3`)
+- ✅ Redirección de entrada (`<`)
+- ✅ Redirección de salida truncar (`>`) y añadir (`>>`)
+- ✅ Here-document (`<<`) con expansión de variables
+- ✅ Señales: `Ctrl+C` muestra nuevo prompt; `Ctrl+\` ignorado
+- ✅ Búsqueda de binarios en `PATH`
+- ✅ Detección de directorios al ejecutar (error 126)
+- ✅ Arranque sin entorno (`env -i ./minishell`)
+
+### Limitaciones y Características No Implementadas
+
+- ❌ Operadores lógicos (`&&`, `||`)
+- ❌ Sustitución de comandos (`$(...)` o comillas invertidas)
+- ❌ Expansión de comodines/glob (`*`, `?`, `[...]`)
+- ❌ Control de trabajos (`bg`, `fg`, `jobs`)
+- ❌ Expansión aritmética (`$((expr))`)
+- ❌ Estructuras de control (`if`, `for`, `while`, `case`)
+- ❌ Redirección `2>&1` y `&>`
+- ❌ Aliases
+
+### Consideraciones de Implementación
+
+- **Gestión del entorno**: Las variables se almacenan internamente; `export` y `unset` modifican el estado persistente del proceso padre gracias al indicador `has_pipe` (flag que señala si el comando forma parte de un pipeline).
+- **Builtins en padre vs hijo**: Los builtins que modifican el estado (`cd`, `export`, `unset`) se ejecutan en el proceso padre cuando no hay pipes, para que sus efectos persistan.
+- **Señales en hijos**: Cada proceso hijo restaura el comportamiento por defecto de las señales (`signal_son()`).
+- **Here-doc**: El contenido se escribe en un archivo temporal que después se lee y se inyecta en el stdin del comando mediante una tubería anónima.
+- **Límites**: `PIPE_MAX=512`, `REDIR_MAX=1024`, `HDOC_MAX=1024`, `PATH_MAX=4096`.
+
+---
+
+## Guía de Estudio para la Evaluación
+
+A continuación se detallan todas las funciones organizadas por módulos para facilitar el repaso y estudio.
 
 ---
 
