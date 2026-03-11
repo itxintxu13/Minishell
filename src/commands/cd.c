@@ -75,6 +75,7 @@ void	result_path(char **pwd, char *path)
 int	ft_cd(char *path)
 {
 	char	*pwd;
+	char	*oldpwd;
 	DIR		*dir;
 
 	pwd = getcwd(NULL, 0);
@@ -82,6 +83,7 @@ int	ft_cd(char *path)
 		error_handle_f(127, "Error: not exist PWD en env\n");
 	if (!path)
 		error_handle_f(127, "Error: *path is NULL\n");
+	oldpwd = ft_strdup(pwd);
 	result_path(&pwd, path);
 	dir = opendir(pwd);
 	if (!dir)
@@ -89,6 +91,9 @@ int	ft_cd(char *path)
 	closedir(dir);
 	if (chdir(pwd) == -1)
 		error_handle_f(1, "cd: chdir failed\n");
+	if (oldpwd)
+		ft_export("OLDPWD", oldpwd);
+	free(oldpwd);
 	ft_export("PWD", pwd);
 	free(pwd);
 	return (0);
