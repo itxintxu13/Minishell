@@ -43,12 +43,17 @@ void	compute_error(char **tokens)
 char	*compute_dolars(char *token)
 {
 	size_t	i;
+	char	flg;
 
 	i = 0;
+	flg = 0;
 	while (token && token[i])
 	{
-		if (*token != '\'' && token[i] == '$')
+		compute_flg_mask(token[i], &flg);
+		if (!(flg & SQUOTE) && token[i] == '$')
 			token = expand_var(token, i);
+		if (!token)
+			return (NULL);
 		if (token[i])
 			i++;
 	}

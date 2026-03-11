@@ -50,7 +50,6 @@ void	execute_binary(char **tokens)
 			exit(127);
 		exit(127);
 	}
-	printf("errror ---> %d \n", errno);
 	error_handle_f(errno, 0);
 }
 

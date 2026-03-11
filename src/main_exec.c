@@ -41,9 +41,17 @@ void	parent_finalize(char **tokens,
 			int has_pipe,
 			char **env_save)
 {
+	int	exit_code;
+
 	free_all(tokens);
 	verify_env_cwd(status || has_pipe, env_save);
-	ft_export_num("?", WEXITSTATUS(status));
+	if (WIFEXITED(status))
+		exit_code = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		exit_code = 128 + WTERMSIG(status);
+	else
+		exit_code = 1;
+	ft_export_num("?", exit_code);
 }
 
 int	prepare_and_get_tokens(char *str, char ***out_tokens, char **env_save)
