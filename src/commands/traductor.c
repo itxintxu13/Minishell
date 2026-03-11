@@ -74,33 +74,15 @@ void	ft_pwd_tokens(void)
 
 void	ft_export_tokens(char **tokens, int has_pipe)
 {
-	int		len;
-	int		aux;
-	char	**str;
+	int	len;
+	int	aux;
 
 	aux = 0;
 	len = len_all(tokens);
 	if (len == 1)
 		ft_export_void();
 	while (++aux != len)
-	{
-		str = ft_split_custom(tokens[aux], '=');
-		if (include(str[0], "?") || !valid_name_export(str[0]))
-		{
-			free_all(str);
-			error_handle_f(1, " not a valid identifier\n");
-		}
-		if (has_pipe || !include(tokens[aux], "="))
-		{
-			free_all(str);
-			continue ;
-		}
-		if (len_all(str) == 2)
-			ft_export(str[0], str[1]);
-		else
-			ft_export(str[0], "");
-		free_all(str);
-	}
+		ft_process_export(tokens, aux, has_pipe);
 	exit(EXIT_SUCCESS);
 }
 

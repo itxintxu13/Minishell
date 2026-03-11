@@ -47,6 +47,19 @@ char	*read_input(char *delimiter)
 	return (buff);
 }
 
+static void	write_buffer_to_fd(int fd, char *buff)
+{
+	if (buff && write(fd, buff, ft_strlen(buff)) == -1)
+	{
+		close(fd);
+		free(buff);
+		error_handle_f(1, "Failed to write to temporary file\n");
+		return ;
+	}
+	free(buff);
+	close(fd);
+}
+
 void	save_buffer(char *buff, int	*j)
 {
 	char	name[66];
@@ -67,13 +80,5 @@ void	save_buffer(char *buff, int	*j)
 		free(buff);
 		error_handle_f(1, "Failed to open temporary file\n");
 	}
-	if (buff && write(fd, buff, ft_strlen(buff)) == -1)
-	{
-		close(fd);
-		free(buff);
-		buff = NULL;
-		error_handle_f(1, "Failed to write to temporary file\n");
-	}
-	free(buff);
-	close(fd);
+	write_buffer_to_fd(fd, buff);
 }

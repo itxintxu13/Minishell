@@ -45,6 +45,7 @@ int		is_builtin(char **tokens);
 void	ft_echo_tokens(char **tokens);
 void	ft_cd_tokens(char **tokens, int has_pipe);
 void	ft_export_tokens(char **tokens, int has_pipe);
+void	ft_process_export(char **tokens, int aux, int has_pipe);
 void	ft_unset_tokens(char **tokens, int has_pipe);
 void	ft_pwd_tokens(void);
 void	ft_env_tokens(void);
