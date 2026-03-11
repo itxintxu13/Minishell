@@ -12,18 +12,12 @@
 
 #include "../../include/utils.h"
 
-void	case_split(char ***parse, char **tokens, int aux)
+static int	ft_syntax_error(void)
 {
-	if (equal(tokens[aux], ">"))
-		(*parse) = append_matriz((*parse), "\n");
-	else if (equal(tokens[aux], "<"))
-		(*parse) = append_matriz((*parse), "\n");
-	else if (equal(tokens[aux], "<<"))
-		(*parse) = append_matriz((*parse), "\n");
-	else if (equal(tokens[aux], ">>"))
-		(*parse) = append_matriz((*parse), "\n");
-	else if (equal(tokens[aux], "|"))
-		(*parse) = append_matriz((*parse), "\n");
+	if (write(2, "minishell: syntax error near unexpected token\n",
+			46) == -1)
+		return (2);
+	return (2);
 }
 
 void	initialize_array(char	*arr[6])
@@ -36,19 +30,16 @@ void	initialize_array(char	*arr[6])
 	arr[5] = NULL;
 }
 
-void	shear_error(char **tokens, int aux)
+int	shear_error(char **tokens, int aux)
 {
-	int		max;
-	char	*errors[6];
 	int		err;
+	char	*errors[6];
 	int		tem;
 
 	initialize_array(errors);
-	max = len_all(tokens);
-	(void)max;
 	err = 0;
 	if (equal(tokens[0], errors[0]))
-		error_handle_f(2, "syntax error near unexpected token\n");
+		return (ft_syntax_error());
 	while (errors[err] && tokens[aux])
 	{
 		tem = -1;
@@ -57,12 +48,13 @@ void	shear_error(char **tokens, int aux)
 			if (equal(tokens[aux], "|") && tem == 1)
 				break ;
 			if (equal(tokens[aux + 1], errors[tem]))
-				error_handle_f(2, "syntax error near unexpected token\n");
+				return (ft_syntax_error());
 		}
 		if (equal(tokens[aux], errors[err]) && !tokens[aux + 1])
-			error_handle_f(2, "syntax error near unexpected token\n");
+			return (ft_syntax_error());
 		err++;
 	}
+	return (0);
 }
 
 char	**parse(char **tokens)
@@ -73,6 +65,12 @@ char	**parse(char **tokens)
 	if (!tokens)
 		return (tokens);
 	while (tokens && len_all(tokens) != ++aux)
-		shear_error(tokens, aux);
+	{
+		if (shear_error(tokens, aux))
+		{
+			free_all(tokens);
+			return (NULL);
+		}
+	}
 	return (tokens);
 }

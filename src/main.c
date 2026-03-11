@@ -26,7 +26,12 @@ void	execute_console(char *str, char **env_save)
 	int		has_pipe;
 
 	has_pipe = prepare_and_get_tokens(str, &tokens, env_save);
-	if (!tokens || !*tokens)
+	if (!tokens)
+	{
+		ft_export_num("?", 2);
+		return ;
+	}
+	if (!*tokens)
 	{
 		free_all(tokens);
 		return ;
@@ -81,7 +86,6 @@ int	main(int argc, char **argv, char **env)
 		if (ft_strlen(str))
 			add_history(str);
 		execute_console(str, env_save);
-		free(str);
 		free_all(env_save);
 	}
 	rl_clear_history();
