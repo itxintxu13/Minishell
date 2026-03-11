@@ -38,7 +38,7 @@ void	print_text(char *str)
 
 int	ft_echo(char *text, int flag_n)
 {
-	print_text(text);
+	print_str(text);
 	if (!flag_n)
 		printf("\n");
 	return (0);

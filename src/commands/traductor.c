@@ -31,7 +31,7 @@ void	ft_echo_tokens(char **tokens)
 	while ((++aux) != len)
 	{
 		text = append(text, ft_strlen(tokens[aux]), tokens[aux]);
-		if (aux + 1 != len && ft_strlen(tokens[aux]))
+		if (aux + 1 != len)
 			text = append(text, ft_strlen(" "), " ");
 	}
 	ft_echo(text, flag);
@@ -58,7 +58,21 @@ void	ft_cd_tokens(char **tokens, int has_pipe)
 		free(path);
 	}
 	else if (!has_pipe)
-		ft_cd(tokens[1]);
+	{
+		if (equal(tokens[1], "-"))
+		{
+			path = ft_getenv("OLDPWD");
+			if (!path)
+				error_handle_f(1, "cd: OLDPWD not set\n");
+			else
+			{
+				ft_cd(path);
+				free(path);
+			}
+		}
+		else
+			ft_cd(tokens[1]);
+	}
 	exit(EXIT_SUCCESS);
 }
 
