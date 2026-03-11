@@ -64,8 +64,11 @@ void	ft_cd_tokens(char **tokens, int has_pipe)
 			path = ft_getenv("OLDPWD");
 			if (!path)
 				error_handle_f(1, "cd: OLDPWD not set\n");
-			ft_cd(path);
-			free(path);
+			else
+			{
+				ft_cd(path);
+				free(path);
+			}
 		}
 		else
 			ft_cd(tokens[1]);
