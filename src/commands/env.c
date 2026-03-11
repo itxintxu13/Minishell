@@ -101,7 +101,7 @@ char	*ft_getenv(char *name)
 	while (vars && vars[++index])
 	{
 		aux = 0;
-		while (vars[index][aux] != '=')
+		while (vars[index][aux] && vars[index][aux] != '=')
 			aux++;
 		size = determine_size(vars[index], name, aux);
 		if (equaln(vars[index], name, size))

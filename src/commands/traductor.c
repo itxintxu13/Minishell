@@ -67,6 +67,11 @@ void	ft_pwd_tokens(void)
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0);
+	if (!pwd)
+	{
+		error_handle_f(1, "pwd: error retrieving current directory\n");
+		return ;
+	}
 	printf("%s\n", pwd);
 	free(pwd);
 	exit(EXIT_SUCCESS);

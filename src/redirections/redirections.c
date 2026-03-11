@@ -105,7 +105,7 @@ char	**redir_heredoc(char **tokens, int *i)
 	unlink(name);
 	if (pipe(pipe_hd) == -1)
 		error_handle(0, 0);
-	if (write(pipe_hd[1], buf, ft_strlen(buf)) == -1)
+	if (buf && write(pipe_hd[1], buf, ft_strlen(buf)) == -1)
 	{
 		free(buf);
 		error_handle(0, 0);
