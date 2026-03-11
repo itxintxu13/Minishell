@@ -86,7 +86,7 @@ char	**expand(char **input)
 	int		j;
 
 	if (!input)
-		exit(0);
+		return (NULL);
 	i = -1;
 	j = 0;
 	while (input[++i])
