@@ -16,15 +16,26 @@
 void	ft_process_export(char **tokens, int aux, int has_pipe)
 {
 	char	**str;
+	char	*existing;
 
 	str = ft_split_custom(tokens[aux], '=');
-	if (include(str[0], "?") || !valid_name_export(str[0]))
+	if (!valid_name_export(str[0]))
 	{
 		free_all(str);
 		error_handle_f(1, " not a valid identifier\n");
 	}
-	if (has_pipe || !include(tokens[aux], "="))
+	if (has_pipe)
 	{
+		free_all(str);
+		return ;
+	}
+	if (!include(tokens[aux], "="))
+	{
+		existing = ft_getenv(str[0]);
+		if (!existing)
+			ft_export(str[0], "");
+		else
+			free(existing);
 		free_all(str);
 		return ;
 	}
