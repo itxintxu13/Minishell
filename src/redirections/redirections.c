@@ -98,19 +98,16 @@ char	*load_buffer(int fd)
 
 char	**redir_heredoc(char **tokens, int *i)
 {
-	char	name[65];
 	int		fd;
 	char	*buf;
 	int		pipe_hd[2];
 
-	ft_memmove(name, "./", 3);
-	ft_strlcat(name, tokens[*i + 1], 65);
-	fd = open(name, O_RDONLY);
+	fd = open(tokens[*i + 1], O_RDONLY);
 	if (fd == -1)
 		error_handle(0, 0);
 	buf = load_buffer(fd);
 	close(fd);
-	unlink(name);
+	unlink(tokens[*i + 1]);
 	if (pipe(pipe_hd) == -1)
 		error_handle(0, 0);
 	if (buf && write(pipe_hd[1], buf, ft_strlen(buf)) == -1)

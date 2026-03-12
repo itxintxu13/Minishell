@@ -19,7 +19,7 @@
 #include "../../include/utils.h"
 #include "../../include/ft_limits.h"
 
-#define TMP_FILE "tmp"
+#define TMP_FILE "/tmp/tmp"
 
 char	*read_input(char *delimiter)
 {

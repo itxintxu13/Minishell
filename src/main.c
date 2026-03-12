@@ -86,6 +86,8 @@ int	main(int argc, char **argv, char **env)
 		if (!str)
 		{
 			free_all(env_save);
+			if (write(2, "exit\n", 5) == -1)
+				break ;
 			break ;
 		}
 		if (ft_strlen(str))

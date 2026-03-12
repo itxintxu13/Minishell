@@ -76,7 +76,11 @@ void	is_directory(char **tokens)
 	if (!dir)
 		return ;
 	closedir(dir);
-	error_handle_f(126, " Is a directory\n");
+	if (write(2, "minishell: ", 11) == -1
+		|| write(2, *tokens, ft_strlen(*tokens)) == -1
+		|| write(2, ": Is a directory\n", 17) == -1)
+		exit(126);
+	exit(126);
 }
 
 void	execute_simple_command(char **tokens, int has_pipe)

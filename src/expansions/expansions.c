@@ -64,7 +64,7 @@ char	*expand_heredoc(char *delimiter, int *j)
 {
 	char	*buff;
 	char	*tmp;
-	char	name[15];
+	char	name[80];
 	char	*file_no;
 	int		expand;
 
@@ -76,9 +76,9 @@ char	*expand_heredoc(char *delimiter, int *j)
 	if (expand)
 		buff = compute_dolars(buff);
 	save_buffer(buff, j);
-	ft_memmove(name, "tmp", 4);
+	ft_memmove(name, "/tmp/tmp", 9);
 	file_no = ft_itoa((*j)++);
-	ft_strlcat(name, file_no, 15);
+	ft_strlcat(name, file_no, 80);
 	free(file_no);
 	return (ft_strdup(name));
 }

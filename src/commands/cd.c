@@ -80,17 +80,33 @@ int	ft_cd(char *path)
 
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
-		error_handle_f(127, "Error: not exist PWD en env\n");
+		error_handle_f(1, "cd: error retrieving current directory\n");
 	if (!path)
-		error_handle_f(127, "Error: *path is NULL\n");
+		error_handle_f(1, "cd: path is NULL\n");
 	oldpwd = ft_strdup(pwd);
 	result_path(&pwd, path);
 	dir = opendir(pwd);
 	if (!dir)
-		error_handle_f(1, "cd: No such file or directory\n");
+	{
+		free(oldpwd);
+		free(pwd);
+		if (write(2, "minishell: cd: ", 15) == -1
+			|| write(2, path, ft_strlen(path)) == -1
+			|| write(2, ": No such file or directory\n", 28) == -1)
+			exit(1);
+		exit(1);
+	}
 	closedir(dir);
 	if (chdir(pwd) == -1)
-		error_handle_f(1, "cd: chdir failed\n");
+	{
+		free(oldpwd);
+		free(pwd);
+		if (write(2, "minishell: cd: ", 15) == -1
+			|| write(2, path, ft_strlen(path)) == -1
+			|| write(2, ": Permission denied\n", 20) == -1)
+			exit(1);
+		exit(1);
+	}
 	if (oldpwd)
 		ft_export("OLDPWD", oldpwd);
 	free(oldpwd);
