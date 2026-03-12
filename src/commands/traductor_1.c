@@ -20,6 +20,15 @@ void	ft_process_export(char **tokens, int aux, int has_pipe)
 	int		nlen;
 
 	str = ft_split_custom(tokens[aux], '=');
+	if (!str[0])
+	{
+		free_all(str);
+		if (write(2, "minishell: export: `", 20) == -1
+			|| write(2, tokens[aux], ft_strlen(tokens[aux])) == -1
+			|| write(2, "': not a valid identifier\n", 26) == -1)
+			exit(1);
+		exit(1);
+	}
 	nlen = ft_strlen(str[0]);
 	if (nlen > 0 && str[0][nlen - 1] == '=')
 		str[0][nlen - 1] = '\0';

@@ -61,7 +61,8 @@ int	ft_env(void)
 	aux = 0;
 	while (vars && vars[aux])
 	{
-		if (vars[aux][0] != '?' || (vars[aux][1] != '=' && vars[aux][1] != '?'))
+		if (vars[aux][0] != '?' || !vars[aux][1]
+			|| (vars[aux][1] != '=' && vars[aux][1] != '?'))
 			printf("%s\n", vars[aux]);
 		aux++;
 	}

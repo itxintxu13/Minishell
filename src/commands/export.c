@@ -81,7 +81,8 @@ void	ft_export_void(void)
 	aux = 0;
 	while (env[aux])
 	{
-		if (env[aux][0] == '?' && (env[aux][1] == '=' || env[aux][1] == '?'))
+		if (env[aux][0] == '?' && env[aux][1]
+			&& (env[aux][1] == '=' || env[aux][1] == '?'))
 		{
 			aux++;
 			continue ;

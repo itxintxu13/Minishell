@@ -50,6 +50,7 @@ void	check_path_var(char *cmd, char dir[PATH_MAX])
 			paths++;
 	}
 	free(tmp);
+	dir[0] = '\0';
 }
 
 void	compute_fds(int fds[REDIR_MAX], char mode)

@@ -80,9 +80,9 @@ int	ft_cd(char *path)
 
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
-		error_handle_f(1, "cd: error retrieving current directory\n");
+		error_handle_f(1, "minishell: cd: error retrieving current directory\n");
 	if (!path)
-		error_handle_f(1, "cd: path is NULL\n");
+		error_handle_f(1, "minishell: cd: path is NULL\n");
 	oldpwd = ft_strdup(pwd);
 	result_path(&pwd, path);
 	dir = opendir(pwd);
