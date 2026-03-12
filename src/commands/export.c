@@ -69,6 +69,46 @@ int	ft_export_num(char *name, int num)
 	return (0);
 }
 
+static int	cmp_env_names(const char *a, const char *b)
+{
+	while (*a && *b && *a != '=' && *b != '=')
+	{
+		if ((unsigned char)*a != (unsigned char)*b)
+			return ((unsigned char)*a - (unsigned char)*b);
+		a++;
+		b++;
+	}
+	if ((*a == '=' || *a == '\0') && (*b == '=' || *b == '\0'))
+		return (0);
+	if (*a == '=' || *a == '\0')
+		return (-1);
+	return (1);
+}
+
+static void	sort_env(char **env)
+{
+	int		i;
+	int		j;
+	char	*tmp;
+
+	i = 0;
+	while (env[i])
+	{
+		j = i + 1;
+		while (env[j])
+		{
+			if (cmp_env_names(env[i], env[j]) > 0)
+			{
+				tmp = env[i];
+				env[i] = env[j];
+				env[j] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
 void	ft_export_void(void)
 {
 	char	**env;
@@ -78,6 +118,7 @@ void	ft_export_void(void)
 	env = ft_getallenv();
 	if (!env)
 		return ;
+	sort_env(env);
 	aux = 0;
 	while (env[aux])
 	{
