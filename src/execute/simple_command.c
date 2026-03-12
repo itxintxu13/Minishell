@@ -34,23 +34,36 @@ void	execute_builtin(char **tokens, int has_pipe)
 void	execute_binary(char **tokens)
 {
 	char	**env;
+	char	*cmd;
+	int		code;
 
+	cmd = ft_strdup(tokens[0]);
 	env = ft_getallenv();
 	execve(tokens[0], tokens, env);
 	free_all(tokens);
 	free_all(env);
 	if (errno == EACCES)
+		code = 126;
+	else
+		code = 127;
+	if (write(2, "minishell: ", 11) == -1
+		|| write(2, cmd, ft_strlen(cmd)) == -1)
 	{
-		perror("minishel: ");
-		exit(126);
+		free(cmd);
+		exit(code);
 	}
-	else if (errno == ENOENT)
+	if (code == 126 && write(2, ": Permission denied\n", 20) == -1)
 	{
-		if (write(2, " command not found\n", 20) == -1)
-			exit(127);
-		exit(127);
+		free(cmd);
+		exit(code);
 	}
-	error_handle_f(errno, 0);
+	if (code == 127 && write(2, ": command not found\n", 20) == -1)
+	{
+		free(cmd);
+		exit(code);
+	}
+	free(cmd);
+	exit(code);
 }
 
 void	is_directory(char **tokens)
@@ -81,6 +94,14 @@ void	execute_simple_command(char **tokens, int has_pipe)
 		if (is_builtin(tokens))
 			execute_builtin(tokens, has_pipe);
 		check_path_var(*tokens, dir);
+		if (dir[0] == '\0')
+		{
+			if (write(2, "minishell: ", 11) == -1
+				|| write(2, *tokens, ft_strlen(*tokens)) == -1
+				|| write(2, ": command not found\n", 20) == -1)
+				exit(127);
+			exit(127);
+		}
 		free(*tokens);
 		*tokens = ft_strdup(dir);
 	}

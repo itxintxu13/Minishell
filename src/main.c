@@ -39,11 +39,16 @@ void	execute_console(char *str, char **env_save)
 	pid = fork();
 	if (pid == 0)
 	{
-		signal_father();
+		signal_son();
 		child_execute_tokens(tokens, has_pipe);
 	}
 	else
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		signal_main();
+	}
 	parent_finalize(tokens, status, has_pipe, env_save);
 }
 

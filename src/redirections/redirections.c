@@ -30,10 +30,14 @@ char	**redir_input(char **tokens, int *i, int *fd)
 	*fd = open(tokens[*i + 1], O_RDONLY);
 	if (*fd == -1)
 	{
-		if (write(STDERR_FILENO, " ", 1) == -1)
-			exit(EXIT_FAILURE);
-		if (write(STDERR_FILENO, strerror(errno),
+		if (write(STDERR_FILENO, "minishell: ", 11) == -1
+			|| write(STDERR_FILENO, tokens[*i + 1],
+				ft_strlen(tokens[*i + 1])) == -1
+			|| write(STDERR_FILENO, ": ", 2) == -1
+			|| write(STDERR_FILENO, strerror(errno),
 				ft_strlen(strerror(errno))) == -1)
+			exit(EXIT_FAILURE);
+		if (write(STDERR_FILENO, "\n", 1) == -1)
 			exit(EXIT_FAILURE);
 		exit(EXIT_FAILURE);
 	}
@@ -53,10 +57,14 @@ char	**redir_output(char **tokens, int *i, int *fd, char mode)
 	*fd = open(tokens[*i + 1], flags, permitions);
 	if (*fd == -1)
 	{
-		if (write(STDERR_FILENO, " ", 1) == -1)
-			exit(EXIT_FAILURE);
-		if (write(STDERR_FILENO, strerror(errno),
+		if (write(STDERR_FILENO, "minishell: ", 11) == -1
+			|| write(STDERR_FILENO, tokens[*i + 1],
+				ft_strlen(tokens[*i + 1])) == -1
+			|| write(STDERR_FILENO, ": ", 2) == -1
+			|| write(STDERR_FILENO, strerror(errno),
 				ft_strlen(strerror(errno))) == -1)
+			exit(EXIT_FAILURE);
+		if (write(STDERR_FILENO, "\n", 1) == -1)
 			exit(EXIT_FAILURE);
 		exit(EXIT_FAILURE);
 	}

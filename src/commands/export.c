@@ -30,7 +30,7 @@ int	valid_name_export(char *str)
 			x++;
 		else if (str[x] >= '0' && str[x] <= '9')
 			x++;
-		else if (str[x] == '_' || str[x] == '?' || str[x] == '=')
+		else if (str[x] == '_')
 			x++;
 		else
 			return (0);
@@ -72,6 +72,7 @@ int	ft_export_num(char *name, int num)
 void	ft_export_void(void)
 {
 	char	**env;
+	char	*eq;
 	int		aux;
 
 	env = ft_getallenv();
@@ -80,7 +81,15 @@ void	ft_export_void(void)
 	aux = 0;
 	while (env[aux])
 	{
-		printf("declare -x %s\n", env[aux]);
+		eq = ft_strchr(env[aux], '=');
+		if (eq)
+		{
+			*eq = '\0';
+			printf("declare -x %s=\"%s\"\n", env[aux], eq + 1);
+			*eq = '=';
+		}
+		else
+			printf("declare -x %s\n", env[aux]);
 		aux++;
 	}
 	free_all(env);
