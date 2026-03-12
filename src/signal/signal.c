@@ -14,9 +14,11 @@
 #include <unistd.h>
 #include "../../include/signal_minishel.h"
 
+volatile sig_atomic_t	g_signal = 0;
+
 void	handler_ctrl_c(int sing)
 {
-	(void)(sing);
+	g_signal = sing;
 	if (write(1, "\n", 1) == -1)
 		return ;
 	rl_replace_line("", 0);

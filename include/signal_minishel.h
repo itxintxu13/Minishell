@@ -15,6 +15,8 @@
 
 # include <signal.h>
 
+extern volatile sig_atomic_t	g_signal;
+
 void	signal_main(void);
 void	signal_father(void);
 void	signal_son(void);
