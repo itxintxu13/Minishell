@@ -91,8 +91,7 @@ int	main(int argc, char **argv, char **env)
 	while (in_loop())
 	{
 		env_save = ft_getallenv();
-		ft_prompt();
-		str = readline(" ");
+		str = readline(ft_prompt());
 		if (!handle_stdin_signal(str, env_save))
 			break ;
 		if (ft_strlen(str))
