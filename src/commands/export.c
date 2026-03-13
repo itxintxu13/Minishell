@@ -43,8 +43,8 @@ int	ft_export(char *name, char *value)
 	char	**envs;
 	char	*result;
 
-	if (!value || (!valid_name_export(name) && !equal(name, "?") && !equal(name, "??")))
-		error_handle_f(1, " not a valid identifier\n");
+	if (!value || !name)
+		return (1);
 	if (!include(name, "="))
 		result = ft_strjoin(name, "=");
 	else
@@ -69,6 +69,46 @@ int	ft_export_num(char *name, int num)
 	return (0);
 }
 
+static int	cmp_env_names(const char *a, const char *b)
+{
+	while (*a && *b && *a != '=' && *b != '=')
+	{
+		if ((unsigned char)*a != (unsigned char)*b)
+			return ((unsigned char)*a - (unsigned char)*b);
+		a++;
+		b++;
+	}
+	if ((*a == '=' || *a == '\0') && (*b == '=' || *b == '\0'))
+		return (0);
+	if (*a == '=' || *a == '\0')
+		return (-1);
+	return (1);
+}
+
+static void	sort_env(char **env)
+{
+	int		i;
+	int		j;
+	char	*tmp;
+
+	i = 0;
+	while (env[i])
+	{
+		j = i + 1;
+		while (env[j])
+		{
+			if (cmp_env_names(env[i], env[j]) > 0)
+			{
+				tmp = env[i];
+				env[i] = env[j];
+				env[j] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
 void	ft_export_void(void)
 {
 	char	**env;
@@ -78,12 +118,12 @@ void	ft_export_void(void)
 	env = ft_getallenv();
 	if (!env)
 		return ;
+	sort_env(env);
 	aux = 0;
 	while (env[aux])
 	{
-		if (env[aux][0] == '?'
-			&& (ft_strncmp(env[aux], "?=", 2) == 0
-				|| (env[aux][1] == '?' && ft_strncmp(env[aux] + 1, "?=", 2) == 0)))
+		if (env[aux][0] == '?' && env[aux][1]
+			&& (env[aux][1] == '=' || env[aux][1] == '?'))
 		{
 			aux++;
 			continue ;

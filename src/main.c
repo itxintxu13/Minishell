@@ -55,7 +55,7 @@ void	execute_console(char *str, char **env_save)
 		signal(SIGQUIT, SIG_IGN);
 		waitpid(pid, &status, 0);
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-			write_sigint_nl();
+			write_newline();
 		signal_main();
 	}
 	parent_finalize(tokens, status, has_pipe, env_save);
@@ -92,9 +92,16 @@ int	main(int argc, char **argv, char **env)
 		env_save = ft_getallenv();
 		ft_prompt();
 		str = readline(" ");
+		if (g_signal == SIGINT)
+		{
+			g_signal = 0;
+			ft_export_num("?", 1);
+		}
 		if (!str)
 		{
 			free_all(env_save);
+			if (write(2, "exit\n", 5) == -1)
+				break ;
 			break ;
 		}
 		if (ft_strlen(str))

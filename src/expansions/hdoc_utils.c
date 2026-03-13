@@ -12,14 +12,40 @@
 
 #include <fcntl.h>
 #include <stddef.h>
-#include <readline/readline.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include "../../include/utils.h"
 #include "../../include/ft_limits.h"
 
-#define TMP_FILE "tmp"
+#define TMP_FILE "/tmp/tmp"
+
+static char	*hdoc_read_line(void)
+{
+	char	c;
+	char	buf[2];
+	char	*line;
+	char	*tmp;
+
+	line = ft_strdup("");
+	if (!line)
+		return (NULL);
+	buf[1] = '\0';
+	while (1)
+	{
+		if (read(0, &c, 1) <= 0)
+			break ;
+		if (c == '\n')
+			break ;
+		buf[0] = c;
+		tmp = line;
+		line = ft_strjoin(tmp, buf);
+		free(tmp);
+		if (!line)
+			return (NULL);
+	}
+	return (line);
+}
 
 char	*read_input(char *delimiter)
 {
@@ -27,11 +53,13 @@ char	*read_input(char *delimiter)
 	char	*tmp;
 	char	*buff;
 
-	str = "";
-	buff = 0;
+	str = NULL;
+	buff = NULL;
 	while (1)
 	{
-		str = readline(">");
+		if (write(2, "> ", 2) == -1)
+			break ;
+		str = hdoc_read_line();
 		if (!str || equal(str, delimiter))
 		{
 			free(str);

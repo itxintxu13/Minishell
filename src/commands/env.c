@@ -55,27 +55,19 @@ char	**ft_getallenv(void)
 int	ft_env(void)
 {
 	char	**vars;
-	char	*exclude;
 	int		aux;
-	char	*tem;
 
 	vars = ft_getallenv();
-	tem = ft_getenv("?");
-	exclude = append(ft_strdup("?="), ft_strlen(tem), tem);
-	free(tem);
 	aux = 0;
 	while (vars && vars[aux])
 	{
-		if (!equal(exclude, vars[aux])
-			&& !(ft_strncmp(vars[aux], "?=", 2) == 0
-				|| (vars[aux][1] == '?'
-					&& ft_strncmp(vars[aux] + 1, "?=", 2) == 0)))
+		if (vars[aux][0] != '?' || !vars[aux][1]
+			|| (vars[aux][1] != '=' && vars[aux][1] != '?'))
 			printf("%s\n", vars[aux]);
 		aux++;
 	}
-	free(exclude);
 	free_all(vars);
-	return (1);
+	return (0);
 }
 
 int	determine_size(char *var, char *name, int size1)

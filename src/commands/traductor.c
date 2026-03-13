@@ -47,12 +47,12 @@ void	ft_cd_tokens(char **tokens, int has_pipe)
 	len = len_all(tokens);
 	path = NULL;
 	if (len > 2)
-		error_handle_f(1, "cd: too many arguments\n");
+		error_handle_f(1, "minishell: cd: too many arguments\n");
 	if (len == 1)
 	{
 		path = ft_getenv("HOME");
 		if (!path)
-			error_handle_f(1, "cd: HOME not set\n");
+			error_handle_f(1, "minishell: cd: HOME not set\n");
 		if (!has_pipe)
 			ft_cd(path);
 		free(path);
@@ -63,7 +63,7 @@ void	ft_cd_tokens(char **tokens, int has_pipe)
 		{
 			path = ft_getenv("OLDPWD");
 			if (!path)
-				error_handle_f(1, "cd: OLDPWD not set\n");
+				error_handle_f(1, "minishell: cd: OLDPWD not set\n");
 			else
 			{
 				ft_cd(path);
