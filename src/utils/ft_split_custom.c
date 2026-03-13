@@ -47,7 +47,7 @@ int	cont_letter_custom(char *str, char C)
 		cant++;
 		aux++;
 	}
-	return (cant + 1);
+	return (cant);
 }
 
 char	**ft_split_custom(char *str, char C)
@@ -66,7 +66,10 @@ char	**ft_split_custom(char *str, char C)
 	while (cant != aux)
 	{
 		if (aux != 0)
+		{
+			str++;
 			letter = ft_strlen(str);
+		}
 		result[aux] = malloc(letter * sizeof(char) + 1);
 		aux1 = 0;
 		while (letter != aux1)

@@ -66,7 +66,10 @@ int	ft_env(void)
 	aux = 0;
 	while (vars && vars[aux])
 	{
-		if (!equal(exclude, vars[aux]))
+		if (!equal(exclude, vars[aux])
+			&& !(ft_strncmp(vars[aux], "?=", 2) == 0
+				|| (vars[aux][1] == '?'
+					&& ft_strncmp(vars[aux] + 1, "?=", 2) == 0)))
 			printf("%s\n", vars[aux]);
 		aux++;
 	}

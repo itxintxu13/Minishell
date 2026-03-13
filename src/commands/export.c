@@ -43,7 +43,7 @@ int	ft_export(char *name, char *value)
 	char	**envs;
 	char	*result;
 
-	if (!value || !valid_name_export(name))
+	if (!value || (!valid_name_export(name) && !equal(name, "?") && !equal(name, "??")))
 		error_handle_f(1, " not a valid identifier\n");
 	if (!include(name, "="))
 		result = ft_strjoin(name, "=");
@@ -81,6 +81,13 @@ void	ft_export_void(void)
 	aux = 0;
 	while (env[aux])
 	{
+		if (env[aux][0] == '?'
+			&& (ft_strncmp(env[aux], "?=", 2) == 0
+				|| (env[aux][1] == '?' && ft_strncmp(env[aux] + 1, "?=", 2) == 0)))
+		{
+			aux++;
+			continue ;
+		}
 		eq = ft_strchr(env[aux], '=');
 		if (eq)
 		{
