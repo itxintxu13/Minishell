@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <asm-generic/errno-base.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include "../../include/utils.h"

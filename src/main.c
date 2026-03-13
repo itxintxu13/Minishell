@@ -16,7 +16,14 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "../include/minishell.h"
+#include "../include/signal_minishel.h"
 #include "execute/simple_command.h"
+
+static void	write_sigint_nl(void)
+{
+	if (write(1, "\n", 1) == -1)
+		return ;
+}
 
 void	execute_console(char *str, char **env_save)
 {
@@ -99,6 +106,7 @@ int	main(int argc, char **argv, char **env)
 		}
 		if (ft_strlen(str))
 			add_history(str);
+		g_signal = 0;
 		execute_console(str, env_save);
 		free_all(env_save);
 	}
