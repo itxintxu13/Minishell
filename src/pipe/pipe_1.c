@@ -41,12 +41,10 @@ void	pipe_io(int in, int out)
 	if (in)
 	{
 		dup2(in, STDIN_FILENO);
-		close(in);
 	}
 	if (out)
 	{
 		dup2(out, STDOUT_FILENO);
-		close(out);
 	}
 }
 

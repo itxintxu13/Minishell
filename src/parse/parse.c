@@ -45,8 +45,6 @@ int	shear_error(char **tokens, int aux)
 		tem = -1;
 		while (equal(tokens[aux], errors[err]) && errors[++tem])
 		{
-			if (equal(tokens[aux], "|") && tem == 1)
-				break ;
 			if (equal(tokens[aux + 1], errors[tem]))
 				return (ft_syntax_error());
 		}
