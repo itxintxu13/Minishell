@@ -13,31 +13,6 @@
 #include "../../include/utils.h"
 #include "../../include/commands.h"
 
-int	valid_name_export(char *str)
-{
-	int	x;
-
-	x = 0;
-	if (!str)
-		return (0);
-	if (str[x] >= '0' && str[x] <= '9')
-		return (0);
-	while (str[x])
-	{
-		if (str[x] >= 'a' && str[x] <= 'z')
-			x++;
-		else if (str[x] >= 'A' && str[x] <= 'Z')
-			x++;
-		else if (str[x] >= '0' && str[x] <= '9')
-			x++;
-		else if (str[x] == '_')
-			x++;
-		else
-			return (0);
-	}
-	return (1);
-}
-
 int	ft_export(char *name, char *value)
 {
 	char	**envs;
@@ -56,16 +31,6 @@ int	ft_export(char *name, char *value)
 	load_env(envs);
 	free_all(envs);
 	free(result);
-	return (0);
-}
-
-int	ft_export_num(char *name, int num)
-{
-	char	*value;
-
-	value = ft_itoa(num);
-	ft_export(name, value);
-	free(value);
 	return (0);
 }
 
@@ -109,35 +74,35 @@ static void	sort_env(char **env)
 	}
 }
 
+static void	print_export_line(char *entry)
+{
+	char	*eq;
+
+	if (entry[0] == '?' && entry[1]
+		&& (entry[1] == '=' || entry[1] == '?'))
+		return ;
+	eq = ft_strchr(entry, '=');
+	if (eq)
+	{
+		*eq = '\0';
+		printf("declare -x %s=\"%s\"\n", entry, eq + 1);
+		*eq = '=';
+	}
+	else
+		printf("declare -x %s\n", entry);
+}
+
 void	ft_export_void(void)
 {
 	char	**env;
-	char	*eq;
 	int		aux;
 
 	env = ft_getallenv();
 	if (!env)
 		return ;
 	sort_env(env);
-	aux = 0;
-	while (env[aux])
-	{
-		if (env[aux][0] == '?' && env[aux][1]
-			&& (env[aux][1] == '=' || env[aux][1] == '?'))
-		{
-			aux++;
-			continue ;
-		}
-		eq = ft_strchr(env[aux], '=');
-		if (eq)
-		{
-			*eq = '\0';
-			printf("declare -x %s=\"%s\"\n", env[aux], eq + 1);
-			*eq = '=';
-		}
-		else
-			printf("declare -x %s\n", env[aux]);
-		aux++;
-	}
+	aux = -1;
+	while (env[++aux])
+		print_export_line(env[aux]);
 	free_all(env);
 }

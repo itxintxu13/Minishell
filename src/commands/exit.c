@@ -29,6 +29,7 @@ void	last_exit(void)
 	status_num = parce_num(status_num);
 	unlink(name_env());
 	free(name_env());
+	rl_clear_history();
 	exit(status_num);
 }
 

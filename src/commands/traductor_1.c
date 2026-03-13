@@ -13,37 +13,33 @@
 #include "../../include/utils.h"
 #include "../../include/commands.h"
 
+static void	validate_export_name(char **str, char *token)
+{
+	int	nlen;
+
+	nlen = 0;
+	if (str[0])
+		nlen = ft_strlen(str[0]);
+	if (nlen > 0 && str[0][nlen - 1] == '=')
+		str[0][nlen - 1] = '\0';
+	if (!str[0] || !valid_name_export(str[0]))
+	{
+		free_all(str);
+		if (write(2, "minishell: export: `", 20) == -1
+			|| write(2, token, ft_strlen(token)) == -1
+			|| write(2, "': not a valid identifier\n", 26) == -1)
+			exit(1);
+		exit(1);
+	}
+}
+
 void	ft_process_export(char **tokens, int aux, int has_pipe)
 {
 	char	**str;
 	char	*existing;
-	int		nlen;
 
 	str = ft_split_custom(tokens[aux], '=');
-	if (!str[0])
-	{
-		free_all(str);
-		if (write(2, "minishell: export: `", 20) == -1
-			|| write(2, tokens[aux], ft_strlen(tokens[aux])) == -1
-			|| write(2, "': not a valid identifier\n", 26) == -1)
-			exit(1);
-		exit(1);
-	}
-	nlen = ft_strlen(str[0]);
-	if (nlen > 0 && str[0][nlen - 1] == '=')
-		str[0][nlen - 1] = '\0';
-	if (!valid_name_export(str[0]))
-	{
-		if (write(2, "minishell: export: `", 20) == -1
-			|| write(2, tokens[aux], ft_strlen(tokens[aux])) == -1
-			|| write(2, "': not a valid identifier\n", 26) == -1)
-		{
-			free_all(str);
-			exit(1);
-		}
-		free_all(str);
-		exit(1);
-	}
+	validate_export_name(str, tokens[aux]);
 	if (has_pipe)
 	{
 		free_all(str);
@@ -66,12 +62,6 @@ void	ft_process_export(char **tokens, int aux, int has_pipe)
 	free_all(str);
 }
 
-void	ft_env_tokens(void)
-{
-	ft_env();
-	error_handle_f(0, 0);
-}
-
 int	verify(char *str)
 {
 	if (str && (*str == '-' || *str == '+'))
@@ -81,6 +71,27 @@ int	verify(char *str)
 		if (*str < '0' || *str > '9')
 			return (2);
 		str++;
+	}
+	return (0);
+}
+
+static int	exit_errors(char **tokens, int len, int has_pipe)
+{
+	if (verify(tokens[1]) != 0)
+	{
+		if (write(2, "minishell: exit: ", 17) == -1
+			|| write(2, tokens[1], ft_strlen(tokens[1])) == -1
+			|| write(2, ": numeric argument required\n", 28) == -1)
+			return (1);
+		if (has_pipe)
+			exit(2);
+		ft_exit(2);
+	}
+	if (len > 2)
+	{
+		if (write(2, "minishell: exit: too many arguments\n", 36) == -1)
+			return (1);
+		error_handle_f(1, "");
 	}
 	return (0);
 }
@@ -98,23 +109,8 @@ void	ft_exit_tokens(char **tokens, int has_pipe)
 			exit(0);
 		ft_exit(0);
 	}
-	if (verify(tokens[1]) != 0)
-	{
-		if (write(2, "minishell: exit: ", 17) == -1
-			|| write(2, tokens[1], ft_strlen(tokens[1])) == -1
-			|| write(2, ": numeric argument required\n", 28) == -1)
-			return ;
-		if (has_pipe)
-			exit(2);
-		ft_exit(2);
+	if (exit_errors(tokens, len, has_pipe))
 		return ;
-	}
-	if (len > 2)
-	{
-		if (write(2, "minishell: exit: too many arguments\n", 36) == -1)
-			return ;
-		error_handle_f(1, "");
-	}
 	if (write(2, "exit\n", 5) == -1)
 		return ;
 	if (has_pipe)

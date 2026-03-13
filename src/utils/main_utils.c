@@ -50,3 +50,14 @@ int	search_pipe(char *str)
 	}
 	return (0);
 }
+
+int	in_loop(void)
+{
+	char	*exit_main;
+
+	exit_main = ft_getenv("??");
+	if (!exit_main)
+		return (1);
+	free(exit_main);
+	return (0);
+}

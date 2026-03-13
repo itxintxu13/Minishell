@@ -40,3 +40,28 @@ int	ft_unset(char *name)
 	free(value);
 	return (0);
 }
+
+void	ft_env_tokens(void)
+{
+	ft_env();
+	error_handle_f(0, 0);
+}
+
+void	ft_unset_tokens(char **tokens, int has_pipe)
+{
+	int	len;
+	int	aux;
+
+	aux = 0;
+	len = len_all(tokens);
+	if (len == 1)
+		exit(EXIT_SUCCESS);
+	while (++aux != len)
+	{
+		if (has_pipe)
+			continue ;
+		if (!include(tokens[aux], "?"))
+			ft_unset(tokens[aux]);
+	}
+	exit(EXIT_SUCCESS);
+}

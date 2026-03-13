@@ -39,6 +39,25 @@ void	ft_echo_tokens(char **tokens)
 	exit(EXIT_SUCCESS);
 }
 
+static void	cd_token_path(char **tokens)
+{
+	char	*path;
+
+	if (equal(tokens[1], "-"))
+	{
+		path = ft_getenv("OLDPWD");
+		if (!path)
+			error_handle_f(1, "minishell: cd: OLDPWD not set\n");
+		else
+		{
+			ft_cd(path);
+			free(path);
+		}
+	}
+	else
+		ft_cd(tokens[1]);
+}
+
 void	ft_cd_tokens(char **tokens, int has_pipe)
 {
 	int		len;
@@ -58,21 +77,7 @@ void	ft_cd_tokens(char **tokens, int has_pipe)
 		free(path);
 	}
 	else if (!has_pipe)
-	{
-		if (equal(tokens[1], "-"))
-		{
-			path = ft_getenv("OLDPWD");
-			if (!path)
-				error_handle_f(1, "minishell: cd: OLDPWD not set\n");
-			else
-			{
-				ft_cd(path);
-				free(path);
-			}
-		}
-		else
-			ft_cd(tokens[1]);
-	}
+		cd_token_path(tokens);
 	exit(EXIT_SUCCESS);
 }
 
@@ -102,24 +107,5 @@ void	ft_export_tokens(char **tokens, int has_pipe)
 		ft_export_void();
 	while (++aux != len)
 		ft_process_export(tokens, aux, has_pipe);
-	exit(EXIT_SUCCESS);
-}
-
-void	ft_unset_tokens(char **tokens, int has_pipe)
-{
-	int	len;
-	int	aux;
-
-	aux = 0;
-	len = len_all(tokens);
-	if (len == 1)
-		exit(EXIT_SUCCESS);
-	while (++aux != len)
-	{
-		if (has_pipe)
-			continue ;
-		if (!include(tokens[aux], "?"))
-			ft_unset(tokens[aux]);
-	}
 	exit(EXIT_SUCCESS);
 }

@@ -19,6 +19,16 @@
 #include "../include/signal_minishel.h"
 #include "execute/simple_command.h"
 
+static void	wait_parent(pid_t pid, int *status)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	waitpid(pid, status, 0);
+	if (WIFSIGNALED(*status) && WTERMSIG(*status) == SIGINT)
+		write_newline();
+	signal_main();
+}
+
 void	execute_console(char *str, char **env_save)
 {
 	pid_t	pid;
@@ -27,14 +37,12 @@ void	execute_console(char *str, char **env_save)
 	int		has_pipe;
 
 	has_pipe = prepare_and_get_tokens(str, &tokens, env_save);
-	if (!tokens)
+	if (!tokens || !*tokens)
 	{
-		ft_export_num("?", 2);
-		return ;
-	}
-	if (!*tokens)
-	{
-		free_all(tokens);
+		if (tokens)
+			free_all(tokens);
+		else
+			ft_export_num("?", 2);
 		return ;
 	}
 	pid = fork();
@@ -44,26 +52,25 @@ void	execute_console(char *str, char **env_save)
 		child_execute_tokens(tokens, has_pipe);
 	}
 	else
-	{
-		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
-		waitpid(pid, &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-			write_newline();
-		signal_main();
-	}
+		wait_parent(pid, &status);
 	parent_finalize(tokens, status, has_pipe, env_save);
 }
 
-int	in_loop(void)
+static int	handle_stdin_signal(char *str, char **env_save)
 {
-	char	*exit_main;
-
-	exit_main = ft_getenv("??");
-	if (!exit_main)
-		return (1);
-	free(exit_main);
-	return (0);
+	if (g_signal == SIGINT)
+	{
+		g_signal = 0;
+		ft_export_num("?", 1);
+	}
+	if (!str)
+	{
+		free_all(env_save);
+		if (write(2, "exit\n", 5) == -1)
+			return (0);
+		return (0);
+	}
+	return (1);
 }
 
 void	initialize_shell(int *argc, char ***argv, char **env)
@@ -86,25 +93,14 @@ int	main(int argc, char **argv, char **env)
 		env_save = ft_getallenv();
 		ft_prompt();
 		str = readline(" ");
-		if (g_signal == SIGINT)
-		{
-			g_signal = 0;
-			ft_export_num("?", 1);
-		}
-		if (!str)
-		{
-			free_all(env_save);
-			if (write(2, "exit\n", 5) == -1)
-				break ;
+		if (!handle_stdin_signal(str, env_save))
 			break ;
-		}
 		if (ft_strlen(str))
 			add_history(str);
 		g_signal = 0;
 		execute_console(str, env_save);
 		free_all(env_save);
 	}
-	rl_clear_history();
 	last_exit();
 	return (0);
 }
