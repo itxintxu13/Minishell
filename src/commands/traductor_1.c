@@ -64,9 +64,13 @@ void	ft_process_export(char **tokens, int aux, int has_pipe)
 
 int	verify(char *str)
 {
-	if (str && (*str == '-' || *str == '+'))
+	if (!str || !*str)
+		return (2);
+	if (*str == '-' || *str == '+')
 		str++;
-	while (str && *str)
+	if (!*str)
+		return (2);
+	while (*str)
 	{
 		if (*str < '0' || *str > '9')
 			return (2);
@@ -75,7 +79,7 @@ int	verify(char *str)
 	return (0);
 }
 
-static int	exit_errors(char **tokens, int len, int has_pipe)
+static int	exit_errors(char **tokens, int len)
 {
 	if (verify(tokens[1]) != 0)
 	{
@@ -83,9 +87,7 @@ static int	exit_errors(char **tokens, int len, int has_pipe)
 			|| write(2, tokens[1], ft_strlen(tokens[1])) == -1
 			|| write(2, ": numeric argument required\n", 28) == -1)
 			return (1);
-		if (has_pipe)
-			exit(2);
-		ft_exit(2);
+		exit(2);
 	}
 	if (len > 2)
 	{
@@ -109,7 +111,7 @@ void	ft_exit_tokens(char **tokens, int has_pipe)
 			exit(0);
 		ft_exit(0);
 	}
-	if (exit_errors(tokens, len, has_pipe))
+	if (exit_errors(tokens, len))
 		return ;
 	if (write(2, "exit\n", 5) == -1)
 		return ;

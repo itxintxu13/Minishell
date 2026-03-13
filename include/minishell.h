@@ -26,7 +26,7 @@
 # define RESET   "\001\033[0m\002"
 # define BOLD    "\001\033[1m\002"
 
-void	ft_prompt(void);
+char	*ft_prompt(void);
 void	ft_putstr(char *s);
 
 #endif

@@ -12,9 +12,7 @@
 
 #include "../../include/minishell.h"
 
-void	ft_prompt(void)
+char	*ft_prompt(void)
 {
-	ft_putstr(GREEN);
-	ft_putstr("🐚 minishell$ Andrea & Itxine");
-	ft_putstr(RESET);
+	return (GREEN "🐚 minishell$ Andrea & Itxine" RESET " ");
 }
