@@ -19,12 +19,6 @@
 #include "../include/signal_minishel.h"
 #include "execute/simple_command.h"
 
-static void	write_sigint_nl(void)
-{
-	if (write(1, "\n", 1) == -1)
-		return ;
-}
-
 void	execute_console(char *str, char **env_save)
 {
 	pid_t	pid;

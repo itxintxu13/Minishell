@@ -102,7 +102,7 @@ void	save_buffer(char *buff, int	*j)
 	ft_strlcat(name, file_no, 66);
 	free(file_no);
 	permitions = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
-	fd = open(name, O_WRONLY | O_CREAT, permitions);
+	fd = open(name, O_WRONLY | O_CREAT | O_TRUNC, permitions);
 	if (fd == -1)
 	{
 		free(buff);
