@@ -24,4 +24,5 @@ void	parent_finalize(char **tokens,
 int		prepare_and_get_tokens(char *str,
 			char ***out_tokens,
 			char **env_save);
+int		in_loop(void);
 #endif

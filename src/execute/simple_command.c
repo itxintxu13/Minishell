@@ -31,21 +31,8 @@ void	execute_builtin(char **tokens, int has_pipe)
 		ft_exit_tokens(tokens, has_pipe);
 }
 
-void	execute_binary(char **tokens)
+static void	write_exec_error(char *cmd, int code)
 {
-	char	**env;
-	char	*cmd;
-	int		code;
-
-	cmd = ft_strdup(tokens[0]);
-	env = ft_getallenv();
-	execve(tokens[0], tokens, env);
-	free_all(tokens);
-	free_all(env);
-	if (errno == EACCES)
-		code = 126;
-	else
-		code = 127;
 	if (write(2, "minishell: ", 11) == -1
 		|| write(2, cmd, ft_strlen(cmd)) == -1)
 	{
@@ -64,6 +51,24 @@ void	execute_binary(char **tokens)
 	}
 	free(cmd);
 	exit(code);
+}
+
+void	execute_binary(char **tokens)
+{
+	char	**env;
+	char	*cmd;
+	int		code;
+
+	cmd = ft_strdup(tokens[0]);
+	env = ft_getallenv();
+	execve(tokens[0], tokens, env);
+	free_all(tokens);
+	free_all(env);
+	if (errno == EACCES)
+		code = 126;
+	else
+		code = 127;
+	write_exec_error(cmd, code);
 }
 
 void	is_directory(char **tokens)
@@ -99,17 +104,10 @@ void	execute_simple_command(char **tokens, int has_pipe)
 			execute_builtin(tokens, has_pipe);
 		check_path_var(*tokens, dir);
 		if (dir[0] == '\0')
-		{
-			if (write(2, "minishell: ", 11) == -1
-				|| write(2, *tokens, ft_strlen(*tokens)) == -1
-				|| write(2, ": command not found\n", 20) == -1)
-				exit(127);
-			exit(127);
-		}
+			write_exec_error(*tokens, 127);
 		free(*tokens);
 		*tokens = ft_strdup(dir);
 	}
 	compute_fds(fds, CLOSE);
 	execute_binary(tokens);
-	free_all(tokens);
 }

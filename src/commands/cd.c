@@ -31,17 +31,15 @@ void	up(char *pwd)
 		pwd[last + 1] = '\0';
 }
 
-void	strip_end(char **str)
-{
-	if ((*str)[ft_strlen(*str) - 1] == '/' && ft_strlen(*str) > 1)
-		(*str)[ft_strlen(*str) - 1] = '\0';
-}
-
 void	rute_abs(char **pwd, char *path)
 {
+	int	len;
+
 	free(*pwd);
 	*pwd = ft_strdup(path);
-	strip_end(pwd);
+	len = ft_strlen(*pwd);
+	while (len > 1 && (*pwd)[len - 1] == '/')
+		(*pwd)[--len] = '\0';
 }
 
 void	result_path(char **pwd, char *path)
@@ -68,8 +66,26 @@ void	result_path(char **pwd, char *path)
 			free(tmp);
 		}
 	}
-	strip_end(pwd);
+	while (ft_strlen(*pwd) > 1 && (*pwd)[ft_strlen(*pwd) - 1] == '/')
+		(*pwd)[ft_strlen(*pwd) - 1] = '\0';
 	free_all(matriz);
+}
+
+static void	cd_check_error(char *path, char *pwd, char *oldpwd, int is_perm)
+{
+	free(oldpwd);
+	free(pwd);
+	if (write(2, "minishell: cd: ", 15) == -1
+		|| write(2, path, ft_strlen(path)) == -1)
+		exit(1);
+	if (is_perm)
+	{
+		if (write(2, ": Permission denied\n", 20) == -1)
+			exit(1);
+	}
+	else if (write(2, ": No such file or directory\n", 28) == -1)
+		exit(1);
+	exit(1);
 }
 
 int	ft_cd(char *path)
@@ -80,33 +96,18 @@ int	ft_cd(char *path)
 
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
-		error_handle_f(1, "minishell: cd: error retrieving current directory\n");
+		error_handle_f(1,
+			"minishell: cd: error retrieving current directory\n");
 	if (!path)
 		error_handle_f(1, "minishell: cd: path is NULL\n");
 	oldpwd = ft_strdup(pwd);
 	result_path(&pwd, path);
 	dir = opendir(pwd);
 	if (!dir)
-	{
-		free(oldpwd);
-		free(pwd);
-		if (write(2, "minishell: cd: ", 15) == -1
-			|| write(2, path, ft_strlen(path)) == -1
-			|| write(2, ": No such file or directory\n", 28) == -1)
-			exit(1);
-		exit(1);
-	}
+		cd_check_error(path, pwd, oldpwd, 0);
 	closedir(dir);
 	if (chdir(pwd) == -1)
-	{
-		free(oldpwd);
-		free(pwd);
-		if (write(2, "minishell: cd: ", 15) == -1
-			|| write(2, path, ft_strlen(path)) == -1
-			|| write(2, ": Permission denied\n", 20) == -1)
-			exit(1);
-		exit(1);
-	}
+		cd_check_error(path, pwd, oldpwd, 1);
 	if (oldpwd)
 		ft_export("OLDPWD", oldpwd);
 	free(oldpwd);

@@ -55,12 +55,10 @@ char	**ft_split_custom(char *str, char C)
 	char	**result;
 	int		cant;
 	int		aux;
-	int		aux1;
 	int		letter;
 
 	cant = cont_words_custom(str, C);
 	aux = 0;
-	letter = 0;
 	result = malloc((1 + cant) * sizeof(char *));
 	letter = cont_letter_custom(str, C);
 	while (cant != aux)
@@ -71,10 +69,9 @@ char	**ft_split_custom(char *str, char C)
 			letter = ft_strlen(str);
 		}
 		result[aux] = malloc(letter * sizeof(char) + 1);
-		aux1 = 0;
-		while (letter != aux1)
-			result[aux][aux1++] = *(str++);
-		result[aux][aux1] = '\0';
+		ft_memmove(result[aux], str, letter);
+		result[aux][letter] = '\0';
+		str += letter;
 		aux++;
 	}
 	result[aux] = NULL;
